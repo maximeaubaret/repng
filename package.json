@@ -1,5 +1,5 @@
 {
-  "name": "repng",
+  "name": "@moveyourbuddy/repng",
   "version": "3.0.0",
   "description": "React component to PNG converter",
   "main": "index.js",
