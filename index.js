@@ -66,32 +66,41 @@ module.exports = async (Component, opts = {}) => {
     webfont
   });
 
-  // todo:
-  // - scale
-  // - delay
-  if (browser == null) {
-    browser = await puppeteer.launch(puppeteerOptions);
+  try {
+    if (browser == null) {
+      browser = puppeteer.launch(puppeteerOptions);
+    }
+
+    await browser;
+
+    const page = await browser.newPage();
+    await page.goto(data);
+    const result = await page.screenshot({
+      type: "png",
+      clip: {
+        x: 0,
+        y: 0,
+        width: parseInt(width),
+        height: parseInt(height)
+      },
+      omitBackground: true
+    });
+
+    await page.close();
+
+    const stream = new Readable();
+    stream._read = () => {};
+
+    stream.push(result);
+    stream.push(null);
+
+    return stream;
+  } catch (err) {
+    console.log("An error occured in repng.");
+    console.log(err);
+
+    browser = null;
+
+    return null;
   }
-
-  const page = await browser.newPage();
-  await page.goto(data);
-  const result = await page.screenshot({
-    type: "png",
-    clip: {
-      x: 0,
-      y: 0,
-      width: parseInt(width),
-      height: parseInt(height)
-    },
-    omitBackground: true
-  });
-  await page.close();
-
-  const stream = new Readable();
-  stream._read = () => {};
-
-  stream.push(result);
-  stream.push(null);
-
-  return stream;
 };
