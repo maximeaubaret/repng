@@ -42,6 +42,7 @@ const getWebfontCSS = fontpath => {
   return css;
 };
 
+let browserPromise;
 let browser;
 
 module.exports = async (Component, opts = {}) => {
@@ -67,11 +68,11 @@ module.exports = async (Component, opts = {}) => {
   });
 
   try {
-    if (browser == null) {
-      browser = puppeteer.launch(puppeteerOptions);
+    if (browserPromise == null) {
+      browserPromise = puppeteer.launch(puppeteerOptions);
     }
 
-    await browser;
+    browser = await browserPromise;
 
     const page = await browser.newPage();
     await page.goto(data);
@@ -98,6 +99,8 @@ module.exports = async (Component, opts = {}) => {
   } catch (err) {
     console.log("An error occured in repng.");
     console.log(err);
+
+    browser.close();
 
     browser = null;
 
