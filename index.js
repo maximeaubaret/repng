@@ -42,6 +42,8 @@ const getWebfontCSS = fontpath => {
   return css;
 };
 
+let browser;
+
 module.exports = async (Component, opts = {}) => {
   const {
     props = {},
@@ -67,7 +69,10 @@ module.exports = async (Component, opts = {}) => {
   // todo:
   // - scale
   // - delay
-  const browser = await puppeteer.launch(puppeteerOptions);
+  if (browser == null) {
+    browser = await puppeteer.launch(puppeteerOptions);
+  }
+
   const page = await browser.newPage();
   await page.goto(data);
   const result = await page.screenshot({
@@ -80,7 +85,7 @@ module.exports = async (Component, opts = {}) => {
     },
     omitBackground: true
   });
-  await browser.close();
+  await page.close();
 
   const stream = new Readable();
   stream._read = () => {};
