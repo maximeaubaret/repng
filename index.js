@@ -100,9 +100,10 @@ module.exports = async (Component, opts = {}) => {
     console.log("An error occured in repng.");
     console.log(err);
 
-    browser.close();
+    browser != null && browser.close();
 
     browser = null;
+    browserPromise = null;
 
     return null;
   }
